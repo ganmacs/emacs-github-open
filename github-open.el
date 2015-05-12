@@ -39,10 +39,23 @@
   (let ((uncommit-id "0000000000000000000000000000000000000000"))
     (not (string= uncommit-id commit-id))))
 
+(defun github-open--chomp-suffix(suffix str)
+  (let ((pos (- (length suffix))))
+    (if (string= suffix (substring str pos))
+        (substring str 0 pos)
+      str)))
+
 (defun github-open--at-commit-id ()
   (let* ((blame-cmd "git blame -l -L %s,+1  %s | cut -d ' ' -f 1")
          (cmd (format blame-cmd (line-number-at-pos) buffer-file-name)))
     (github-open--chomp (shell-command-to-string cmd))))
+
+(defun github-open--get-url ()
+  (let ((url "git config --get remote.origin.url"))
+    (github-open--chomp-suffix
+     ".git"
+     (github-open--chomp
+      (shell-command-to-string url)))))
 
 (defun github-open--url ()
   (let* ((host "git config --get remote.origin.url")
