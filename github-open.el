@@ -5,7 +5,7 @@
 ;; Author: ganmacs <ganmacs_at_gmail.com>
 ;; Maintainer: ganmacs <ganmacs_at_gmail.com>
 ;; URL: https://github.com/ganmacs/emacs-git-grep
-;; Version: 0.0.1
+;; Version: 0.0.2
 ;; Keywords: git
 
 ;; This file is NOT part of GNU Emacs.
