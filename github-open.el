@@ -1,4 +1,4 @@
-;;; emacs-github-open.el --- raku raku blame
+;;; github-open.el --- raku raku blame
 
 ;; Copyright (C) 2015 ganmacs
 
@@ -27,45 +27,45 @@
 
 ;;; Code:
 
-(defun emacs-github-open-chomp (str)
+(defun github-open--chomp (str)
   (replace-regexp-in-string "[\n\r]" "" str))
 
-(defun emacs-github-open-git-repository? ()
+(defun github-open--git-repository? ()
   (let* ((cmd "git rev-parse --is-inside-work-tree")
-         (project (emacs-github-open-chomp (shell-command-to-string cmd))))
+         (project (github-open--chomp (shell-command-to-string cmd))))
     (string= project "true")))
 
-(defun emacs-github-open-commit? (commit-id)
+(defun github-open--commit? (commit-id)
   (let ((uncommit-id "0000000000000000000000000000000000000000"))
     (not (string= uncommit-id commit-id))))
 
-(defun emacs-github-open-at-commit-id ()
+(defun github-open--at-commit-id ()
   (let* ((blame-cmd "git blame -l -L %s,+1  %s | cut -d ' ' -f 1")
          (cmd (format blame-cmd (line-number-at-pos) buffer-file-name)))
-    (emacs-github-open-chomp (shell-command-to-string cmd))))
+    (github-open--chomp (shell-command-to-string cmd))))
 
-(defun eamcs-github-open-url ()
+(defun github-open--url ()
   (let* ((host "git config --get remote.origin.url")
          (github-ssh-url-regex "git@github.com:\\(.*\\)\\/\\(.*\\).git$")
          (github-https-url-regex "https:\\/\\/.*\\/\\(.*\\)\\/\\(.*\\)\\.git$")
          (github-url "https://github.com/%s/%s/commit/%s")
          (url (shell-command-to-string host))
-         (commit-id (emacs-github-open-at-commit-id)))
+         (commit-id (github-open--at-commit-id)))
     (if (and (or (string-match github-https-url-regex url)
                  (string-match github-ssh-url-regex url))
-             (emacs-github-open-commit? commit-id))
+             (github-open--commit? commit-id))
         (let ((user (match-string 1 url))
               (repo (match-string 2 url)))
           (format github-url user repo commit-id))
       (message (concat "Unknown host" host)))))
 
-(defun emacs-github-open ()
+(defun github-open ()
   (interactive)
-  (if (emacs-github-open-git-repository?)
-      (let ((cmd (concat "open " (eamcs-github-open-url))))
+  (if (github-open--git-repository?)
+      (let ((cmd (concat "open " (github-open--url))))
         (shell-command-to-string cmd))
     (message "this file is not git repository")))
 
-(provide 'emacs-github-open)
+(provide 'github-open)
 
-;; emacs-github-open.el ends here
+;; github-open.el ends here

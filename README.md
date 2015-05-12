@@ -1,4 +1,4 @@
-# emacs-github-open
+# github-open
 
 # about
 
