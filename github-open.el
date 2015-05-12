@@ -70,14 +70,14 @@
         (let ((user (match-string 1 url))
               (repo (match-string 2 url)))
           (format github-url user repo commit-id))
-      (message (concat "Unknown host" host)))))
+      (message (concat "Unknown url : " url)))))
 
 (defun github-open ()
   (interactive)
   (if (github-open--git-repository?)
       (let ((cmd (concat "open " (github-open--url))))
         (shell-command-to-string cmd))
-    (message "this file is not git repository")))
+    (message "This directory is not git repository.")))
 
 (provide 'github-open)
 
