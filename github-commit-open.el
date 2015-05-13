@@ -28,7 +28,9 @@
 ;;; Code:
 
 (defun github-commit-open--chomp (str)
-  (replace-regexp-in-string "[\n\r]" "" str))
+  (replace-regexp-in-string "^\\^"
+                            ""
+                            (replace-regexp-in-string "[\n\r]" "" str)))
 
 (defun github-commit-open--git-repository? ()
   (let* ((cmd "git rev-parse --is-inside-work-tree")
