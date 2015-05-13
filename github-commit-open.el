@@ -1,4 +1,4 @@
-;;; github-commit-open.el --- raku raku blame
+;;; github-commit-open.el --- Open commit url in github.com
 
 ;; Copyright (C) 2015 ganmacs
 
