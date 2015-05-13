@@ -1,4 +1,4 @@
-;;; github-open.el --- raku raku blame
+;;; github-commit-open.el --- raku raku blame
 
 ;; Copyright (C) 2015 ganmacs
 
@@ -27,55 +27,55 @@
 
 ;;; Code:
 
-(defun github-open--chomp (str)
+(defun github-commit-open--chomp (str)
   (replace-regexp-in-string "[\n\r]" "" str))
 
-(defun github-open--git-repository? ()
+(defun github-commit-open--git-repository? ()
   (let* ((cmd "git rev-parse --is-inside-work-tree")
-         (project (github-open--chomp (shell-command-to-string cmd))))
+         (project (github-commit-open--chomp (shell-command-to-string cmd))))
     (string= project "true")))
 
-(defun github-open--commit? (commit-id)
+(defun github-commit-open--commit? (commit-id)
   (let ((uncommit-id "0000000000000000000000000000000000000000"))
     (not (string= uncommit-id commit-id))))
 
-(defun github-open--chomp-suffix(suffix str)
+(defun github-commit-open--chomp-suffix(suffix str)
   (let ((pos (- (length suffix))))
     (if (string= suffix (substring str pos))
         (substring str 0 pos)
       str)))
 
-(defun github-open--at-commit-id ()
+(defun github-commit-open--at-commit-id ()
   (let* ((blame-cmd "git blame -l -L %s,+1  %s | cut -d ' ' -f 1")
          (cmd (format blame-cmd (line-number-at-pos) buffer-file-name)))
-    (github-open--chomp (shell-command-to-string cmd))))
+    (github-commit-open--chomp (shell-command-to-string cmd))))
 
-(defun github-open--get-url ()
+(defun github-commit-open--get-url ()
   (let ((url "git config --get remote.origin.url"))
-    (github-open--chomp-suffix
+    (github-commit-open--chomp-suffix
      ".git"
-     (github-open--chomp
+     (github-commit-open--chomp
       (shell-command-to-string url)))))
 
-(defun github-open--url ()
+(defun github-commit-open--url ()
   (let* ((github-url-pattern "^\\(\\(https\\|ssh\\):\\/\\/\\)?\\(git@\\)?github\\.com\\(\\/\\|:\\)\\(.+\\)\\/\\(.+\\)$")
          (github-url "https://github.com/%s/%s/commit/%s")
-         (url (github-open--get-url))
-         (commit-id (github-open--at-commit-id)))
+         (url (github-commit-open--get-url))
+         (commit-id (github-commit-open--at-commit-id)))
     (if (and (string-match github-url-pattern url)
-             (github-open--commit? commit-id))
+             (github-commit-open--commit? commit-id))
         (let ((user (match-string 5 url))
               (repo (match-string 6 url)))
           (format github-url user repo commit-id))
       (message (concat "Unknown url : " url)))))
 
-(defun github-open ()
+(defun github-commit-open ()
   (interactive)
-  (if (github-open--git-repository?)
-      (let ((cmd (concat "open " (github-open--url))))
+  (if (github-commit-open--git-repository?)
+      (let ((cmd (concat "open " (github-commit-open--url))))
         (shell-command-to-string cmd))
     (message "This directory is not git repository.")))
 
-(provide 'github-open)
+(provide 'github-commit-open)
 
-;; github-open.el ends here
+;; github-commit-open.el ends here
