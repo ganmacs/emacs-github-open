@@ -67,7 +67,9 @@
         (let ((user (match-string 5 url))
               (repo (match-string 6 url)))
           (format github-url user repo commit-id))
-      (message (concat "Unknown url : " url)))))
+      (if (github-commit-open--commit? commit-id)
+          (message (concat "Unknown url : " url))
+        (message (concat "Commit not found, please commit and push"))))))
 
 (defun github-commit-open ()
   (interactive)
